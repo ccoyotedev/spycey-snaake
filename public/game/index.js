@@ -47,20 +47,25 @@ function game () {
     //#endregion
 
     //game functions
-    this.init = () => {
-        console.log('game init:')
+    this.init = (highscore, tokenId, setHighscoreCallback) => {
+        console.log('game init');
+        this.highscore = highscore;
+        this.setHighscore = setHighscoreCallback;
+
+        this.tokenId = tokenId;
+
         //load the image files for reference
         this.loadAssets();
     }
     this.startGame = () => {
         // pre game initialization
         //get or set highscore
-        if(!localStorage.getItem('highscore')){
-            localStorage.setItem('highscore', 0);
-            this.highscore = 0;
-        } else {
-            this.highscore = localStorage.getItem('highscore');
-        }
+        // if(!localStorage.getItem('highscore')){
+        //     localStorage.setItem('highscore', 0);
+        //     this.highscore = 0;
+        // } else {
+        //     this.highscore = localStorage.getItem('highscore');
+        // }
         this.special = null;
         // portal references stored as an array
         this.portals = [];
@@ -345,8 +350,10 @@ function game () {
             }
         }
     }
-    this.restartGame = () => {
+    this.restartGame = (highscore, tokenId) => {
         this.score = 0;
+        this.tokenId = tokenId;
+        this.highscore = highscore;
         this.special = null;
         this.portals = [];
         this.createPortal();
@@ -364,7 +371,8 @@ function game () {
         clearInterval(this?.portalInterval);
         clearTimeout(this?.timer);
         if(this.score > this.highscore) {
-            localStorage.setItem('highscore', this.score);
+            // Call highscore callback
+            this.setHighscore(this.score, this.tokenId);
             this.highscore = this.score;
         }
         window.removeEventListener('keydown', this.handleKeyEvents);
