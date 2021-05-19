@@ -7,10 +7,15 @@ const aavegotchiAddress = '0x86935F11C86623deC8a25696E1C19a8659CbF95d';
 export const Web3Context = createContext(null);
 
 export const Web3Provider = ({ children }) => {
+  // Stored on init
   const [ isConnected, setIsConnected ] = useState(false);
   const [ provider, setProvider ] = useState();
   const [ contract, setContract ] = useState();
   const [ signer, setSigner ] = useState();
+
+  // Stored after initial call
+  const [ address, setAddress ] = useState();
+  const [ usersGotchis, setUsersGotchis ] = useState([]);
 
   const connectToNetwork = async () => {
     await window.ethereum.enable();
@@ -32,8 +37,39 @@ export const Web3Provider = ({ children }) => {
   }, [isConnected]);
 
   const getAddress = async () => {
-    return signer.getAddress();
+    if (address) return address;
+
+    const resAddress = await signer?.getAddress();
+    setAddress(resAddress);
+    return resAddress;
   }
+
+  const getAavegotchisForUser = async () => {
+    if (usersGotchis.length > 0) return usersGotchis;
+
+    const account = await getAddress();
+    const gotchis = await contract?.allAavegotchisOfOwner(account);
+    const gotchisWithSVGs = await _getAllAavegotchiSVGs(gotchis || []);
+    setUsersGotchis(gotchisWithSVGs);
+    return gotchisWithSVGs;
+  };
+
+  const _getAavegotchiSvg = async (tokenId) => {
+    const svg = await contract.getAavegotchiSvg(tokenId);
+    return svg;
+  };
+
+  const _getAllAavegotchiSVGs = async (gotchis) => {
+    return Promise.all(
+      gotchis.map(async (gotchi) => {
+        const svg = await _getAavegotchiSvg(gotchi.tokenId);
+        return {
+          ...gotchi,
+          svg,
+        };
+      }),
+    );
+  };
 
   return (
     <Web3Context.Provider value={{
@@ -41,6 +77,7 @@ export const Web3Provider = ({ children }) => {
       contract,
       signer,
       getAddress,
+      getAavegotchisForUser,
     }}>
       {children}
     </Web3Context.Provider>
