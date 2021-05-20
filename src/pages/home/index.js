@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useWeb3 } from '../../web3';
 import { convertInlineSVGToBlobURL } from '../../helpers';
-import { handleSubmitScore } from '../../firebase/actions';
+import { handleSubmitScore, handleGetHighscoreForTokenId } from '../../firebase/actions';
 import './styles.css';
 
 const Home = () => {
@@ -41,22 +41,23 @@ const Home = () => {
         highscore: 0,
       }
     })
-    setHighscore(scores);
-    Game.init(scores[0].highscore, gotchis[selectedIndex].tokenId, (score, tokenId) => handleHighscore(score, tokenId));
+    Game.init(scores[0].highscore, gotchis[selectedIndex].tokenId.toString(), (score, tokenId) => handleHighscore(score, tokenId));
     setGame(Game);
   }
 
-  const handleGotchiSelect = (i) => {
+  const handleGotchiSelect = async (i) => {
     if (game) {
       setSelectedIndex(i);
-      game.endGame();  
-      game.restartGame(highscore.find(score => score.tokenId === gotchis[selectedIndex].tokenId).highscore, gotchis[selectedIndex].tokenId);
+      const tokenId = gotchis[i].tokenId.toString();
+      game.endGame();
+      const score = await handleGetHighscoreForTokenId(tokenId);
+      game.restartGame(score || 0, tokenId);
     }
   }
 
   const handleHighscore = useCallback(async (score, tokenId) => {
     console.log(score, tokenId);
-    const res = await handleSubmitScore();
+    const res = await handleSubmitScore(tokenId.toString(), score);
     console.log(res);
 
   }, []);
