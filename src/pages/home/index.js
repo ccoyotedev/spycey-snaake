@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useWeb3 } from '../../web3';
 import { convertInlineSVGToBlobURL } from '../../helpers';
+import { handleSubmitScore } from '../../firebase/actions';
 import './styles.css';
 
 const Home = () => {
@@ -53,8 +54,10 @@ const Home = () => {
     }
   }
 
-  const handleHighscore = useCallback((score, tokenId) => {
+  const handleHighscore = useCallback(async (score, tokenId) => {
     console.log(score, tokenId);
+    const res = await handleSubmitScore();
+    console.log(res);
 
   }, []);
 
