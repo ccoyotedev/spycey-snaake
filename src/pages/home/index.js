@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useWeb3 } from '../../web3';
 import { convertInlineSVGToBlobURL } from '../../helpers';
-import { handleSubmitScore, handleGetHighscoreForTokenId } from '../../firebase/actions';
+import { handleSubmitScore, handleGetHighscoreForTokenId, handleGetHighscores } from '../../firebase/actions';
+import { Leaderboard } from '../../components';
 import './styles.css';
 
 const Home = () => {
@@ -10,15 +11,28 @@ const Home = () => {
   const [ game, setGame ] = useState();
   const [ selectedIndex, setSelectedIndex ] = useState(0);
 
-  const [highscore, setHighscore] = useState([]);
+  const [ highscores, setHighscores ] = useState([]);
 
   useEffect(() => {
     if (!contract) return;
+    const getHighscores = async () => {
+      const res = await handleGetHighscores();
+      const results = Object.keys(res).map(key => {
+        return {
+          tokenId: key,
+          score: res[key].score,
+          name: res[key].name,
+        }
+      })
+      setHighscores(results);
+    }
 
     const setUserGotchis = async () => {
       const gotchiRes = await getAavegotchisForUser();
       setGotchis(gotchiRes);
     }
+
+    getHighscores();
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -41,7 +55,7 @@ const Home = () => {
         highscore: 0,
       }
     })
-    Game.init(scores[0].highscore, gotchis[selectedIndex].tokenId.toString(), (score, tokenId) => handleHighscore(score, tokenId));
+    Game.init(scores[0].highscore, gotchis[selectedIndex], (score, tokenId) => handleHighscore(score, tokenId));
     setGame(Game);
   }
 
@@ -51,13 +65,19 @@ const Home = () => {
       const tokenId = gotchis[i].tokenId.toString();
       game.endGame();
       const score = await handleGetHighscoreForTokenId(tokenId);
-      game.restartGame(score || 0, tokenId);
+      game.restartGame(score || 0, gotchis[i]);
     }
   }
 
-  const handleHighscore = useCallback(async (score, tokenId) => {
-    console.log(score, tokenId);
-    const res = await handleSubmitScore(tokenId.toString(), score);
+  const handleHighscore = useCallback(async (score, gotchi) => {
+    console.log(score, gotchi);
+    const res = await handleSubmitScore(
+      score,
+      {
+        name: gotchi.name,
+        tokenId: gotchi.tokenId.toString(),
+      }
+    );
     console.log(res);
 
   }, []);
@@ -91,6 +111,7 @@ const Home = () => {
       <canvas id="scoreCanvas" className="scoreBoard"></canvas>
       <canvas id="canvas" className="gameCanvas"></canvas>
       <div id="" className="gameDiv" hidden></div>
+      <Leaderboard data={highscores} />
     </div>
   )
 }

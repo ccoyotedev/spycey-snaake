@@ -1,0 +1,19 @@
+.leaderboard {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.leaderboard .row {
+  border: 2px solid #fa34f3;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.leaderboard .header-row .cell {
+  text-transform: uppercase;
+}
+.leaderboard .row .cell {
+  color: white;
+  padding: 1.2rem;
+}

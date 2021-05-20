@@ -47,12 +47,12 @@ function game () {
     //#endregion
 
     //game functions
-    this.init = (highscore, tokenId, setHighscoreCallback) => {
+    this.init = (highscore, gotchi, setHighscoreCallback) => {
         console.log('game init');
         this.highscore = highscore;
         this.setHighscore = setHighscoreCallback;
 
-        this.tokenId = tokenId;
+        this.gotchi = gotchi;
 
         //load the image files for reference
         this.loadAssets();
@@ -350,9 +350,9 @@ function game () {
             }
         }
     }
-    this.restartGame = (highscore, tokenId) => {
+    this.restartGame = (highscore, gotchi) => {
         this.score = 0;
-        this.tokenId = tokenId;
+        this.gotchi = gotchi;
         this.highscore = highscore;
         this.special = null;
         this.portals = [];
@@ -372,7 +372,7 @@ function game () {
         clearTimeout(this?.timer);
         if(this.score > this.highscore) {
             // Call highscore callback
-            this.setHighscore(this.score, this.tokenId);
+            this.setHighscore(this.score, this.gotchi);
             this.highscore = this.score;
         }
         window.removeEventListener('keydown', this.handleKeyEvents);
