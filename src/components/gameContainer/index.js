@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import { handleSubmitScore, handleGetHighscoreForTokenId } from '../../firebase/actions';
+import { useFirebase } from '../../firebase';
 import './styles.css';
 
 export const GameContainer = ({selectedGotchi}) => {
+  const { handleSubmitScore } = useFirebase();
+
   const [loading, setLoading] = useState(true);
   const [game, setGame] = useState();
 
@@ -21,7 +23,6 @@ export const GameContainer = ({selectedGotchi}) => {
   }, []);
 
   useEffect(() => {
-    console.log(selectedGotchi,loading);
     if (loading || !selectedGotchi) return;
 
     newGame(selectedGotchi);
@@ -33,16 +34,12 @@ export const GameContainer = ({selectedGotchi}) => {
       Game.init(gotchi.highscore, gotchi, (score, tokenId) => handleHighscore(score, tokenId));
       setGame(Game);
     } else {
-      const tokenId = gotchi.tokenId.toString();
       game.endGame();
-      const score = await handleGetHighscoreForTokenId(tokenId);
-
-      game.restartGame(score || 0, gotchi);
+      game.restartGame(gotchi.highscore || 0, gotchi);
     }
   }
 
-  const handleHighscore = useCallback(async (score, gotchi) => {
-    console.log(score, gotchi);
+  const handleHighscore = async (score, gotchi) => {
     const res = await handleSubmitScore(
       score,
       {
@@ -51,8 +48,7 @@ export const GameContainer = ({selectedGotchi}) => {
       }
     );
     console.log(res);
-
-  }, []);
+  };
 
   if (loading) return (
     <div>

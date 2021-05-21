@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useWeb3 } from '../../web3';
-import { handleGetHighscores } from '../../firebase/actions';
+import { useFirebase } from '../../firebase';
 import { Leaderboard } from '../../components';
 import './styles.css';
 import { GotchiSelector } from '../../components/gotchiSelector';
@@ -8,42 +8,24 @@ import { GameContainer } from '../../components/gameContainer';
 
 const Home = () => {
   const { getAavegotchisForUser, contract } = useWeb3();
+  const { highscores } = useFirebase();
+
   const [ gotchis, setGotchis ] = useState([]);
   const [ selectedGotchi, setSelectedGotchi ] = useState();
-  const [ highscores, setHighscores ] = useState([]);
 
-  const [ loaded, setLoaded ] = useState({
-    gotchis: false,
-    highscores: false,
-  })
+  const [ loaded, setLoaded ] = useState(true);
 
   useEffect(() => {
-    if (!contract) return;
-    const getHighscores = async () => {
-      const res = await handleGetHighscores();
-      setHighscores(res);
-      setLoaded((prevState) => {
-        return {
-          ...prevState,
-          highscores: true
-        }
-      })
-    }
+    if (!contract || highscores === undefined) return;
 
     const setUserGotchis = async () => {
       const gotchiRes = await getAavegotchisForUser();
       setGotchis(gotchiRes);
-      setLoaded((prevState) => {
-        return {
-          ...prevState,
-          gotchis: true
-        }
-      })
+      setLoaded(true);
     }
 
-    getHighscores();
     setUserGotchis();
-  }, [contract]);
+  }, [contract, highscores]);
 
   const handleGotchiSelect = useCallback(async (gotchi) => {
     if (gotchi.tokenId === selectedGotchi?.tokenId) return;
@@ -54,7 +36,7 @@ const Home = () => {
 
   }, [highscores, selectedGotchi])
 
-  if (!loaded.gotchis || !loaded.highscores) {
+  if (!loaded) {
     return (
       <div className="App">
         Loading
@@ -69,7 +51,7 @@ const Home = () => {
         <GotchiSelector gotchis={gotchis} handleSelect={handleGotchiSelect} />
       )}
       <GameContainer selectedGotchi={selectedGotchi} />
-      <Leaderboard data={highscores} />
+      <Leaderboard />
     </div>
   )
 }

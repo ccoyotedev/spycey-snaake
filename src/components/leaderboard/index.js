@@ -1,19 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useFirebase } from '../../firebase';
 import './styles.css';
 
-export const Leaderboard = ({data = []}) => {
-  const [sortedData, setSortedData] = useState([]);
-
-  useEffect(() => {
-    const orderByScore = (a, b) => {
-      return b.score - a.score;
-    }
-
-    if (data.length > 0) {
-      const sorted = data.sort(orderByScore);
-      setSortedData(sorted);
-    }
-  }, [data])
+export const Leaderboard = () => {
+  const { highscores } = useFirebase();
 
   return (
     <div className="leaderboard">
@@ -21,7 +10,7 @@ export const Leaderboard = ({data = []}) => {
         <div className="cell">Aavegotchi</div>
         <div className="cell">Score</div>
       </div>
-      {sortedData.map((item, i) => {
+      {highscores?.map((item, i) => {
         return (
           <div className="row glow" key={i}>
             <div className="cell">{i + 1}. {item.name} [{item.tokenId}]</div>
