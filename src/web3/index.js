@@ -27,7 +27,6 @@ export const Web3Provider = ({ children }) => {
       const newProvider = new ethers.providers.Web3Provider(window.ethereum);
       const newContract = new ethers.Contract(aavegotchiAddress, diamondAbi, newProvider);
       const newSigner = newProvider.getSigner();
-
       setProvider(newProvider);
       setContract(newContract);
       setSigner(newSigner);
@@ -47,11 +46,24 @@ export const Web3Provider = ({ children }) => {
   const getAavegotchisForUser = async () => {
     if (usersGotchis.length > 0) return usersGotchis;
 
-    const account = await getAddress();
-    const gotchis = await contract?.allAavegotchisOfOwner(account);
-    const gotchisWithSVGs = await _getAllAavegotchiSVGs(gotchis || []);
-    setUsersGotchis(gotchisWithSVGs);
-    return gotchisWithSVGs;
+    try {
+      const account = await getAddress();
+      const gotchis = await contract?.allAavegotchisOfOwner(account);
+
+      if (gotchis.length === 0) throw new Error('No gotchis found - Please make sure your wallet is connected');
+
+      const gotchisWithSVGs = await _getAllAavegotchiSVGs(gotchis || []);
+      setUsersGotchis(gotchisWithSVGs);
+      return {
+        status: 200,
+        data: gotchisWithSVGs
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        error: error,
+      };
+    }
   };
 
   const _getAavegotchiSvg = async (tokenId) => {

@@ -3,20 +3,10 @@
   padding: 54px 0;
 }
 
-canvas {
-  border: 10px solid purple;
+.error-message {
+  color: #fa34f3;
 }
-.gameCanvas {
-  background: lightblue;
-  /* box-shadow: 5px 10px rgba(255, 255, 255, 0.1); */
-}
-.scoreBoard {
-  background: lightpink;
-  /* box-shadow: 5px 10px rgba(255, 255, 255, 0.1); */
-}
-.gameDiv {
-  width: 650px;
-  height: 100px;
-  background: grey;
-  border: 5px solid purple;
+
+.loading {
+  color: white;
 }

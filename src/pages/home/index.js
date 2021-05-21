@@ -13,6 +13,8 @@ const Home = () => {
   const [ gotchis, setGotchis ] = useState([]);
   const [ selectedGotchi, setSelectedGotchi ] = useState();
 
+  const [ error, setError ] = useState();
+
   const [ loaded, setLoaded ] = useState(true);
 
   useEffect(() => {
@@ -20,7 +22,12 @@ const Home = () => {
 
     const setUserGotchis = async () => {
       const gotchiRes = await getAavegotchisForUser();
-      setGotchis(gotchiRes);
+      if (gotchiRes.status === 200) {
+        setGotchis(gotchiRes.data);
+      } else {
+        console.log(gotchiRes);
+        setError(gotchiRes);
+      }
       setLoaded(true);
     }
 
@@ -39,7 +46,21 @@ const Home = () => {
   if (!loaded) {
     return (
       <div className="App">
-        Loading
+        <h3 className="loading">
+          Loading
+        </h3>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="App">
+        <h3 className="error-message">
+          Error code - {error.status}
+          <br />
+          {error.error.message}
+        </h3>
       </div>
     )
   }
