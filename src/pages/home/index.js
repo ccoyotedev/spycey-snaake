@@ -4,6 +4,7 @@ import { convertInlineSVGToBlobURL } from '../../helpers';
 import { handleSubmitScore, handleGetHighscoreForTokenId, handleGetHighscores } from '../../firebase/actions';
 import { Leaderboard } from '../../components';
 import './styles.css';
+import { GotchiSelector } from '../../components/gotchiSelector';
 
 const Home = () => {
   const { getAavegotchisForUser, contract } = useWeb3();
@@ -17,14 +18,8 @@ const Home = () => {
     if (!contract) return;
     const getHighscores = async () => {
       const res = await handleGetHighscores();
-      const results = Object.keys(res).map(key => {
-        return {
-          tokenId: key,
-          score: res[key].score,
-          name: res[key].name,
-        }
-      })
-      setHighscores(results);
+      console.log(res);
+      setHighscores(res);
     }
 
     const setUserGotchis = async () => {
@@ -94,19 +89,7 @@ const Home = () => {
     <div className="App">
 
       {gotchis.length > 0 && (
-        <div>
-          <img src={convertInlineSVGToBlobURL(gotchis[selectedIndex].svg)} alt="selected gotchi" />
-          <label>
-            Select gotchi:
-            <select value={selectedIndex} onChange={(e) => handleGotchiSelect(e.target.value)}>
-              {gotchis.map((gotchi, i) => {
-                return (
-                  <option value={i}>{gotchi.name}</option>
-                )
-              })}
-            </select>
-          </label>
-        </div>
+        <GotchiSelector gotchis={gotchis} />
       )}
       <canvas id="scoreCanvas" className="scoreBoard"></canvas>
       <canvas id="canvas" className="gameCanvas"></canvas>
