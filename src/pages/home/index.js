@@ -1,99 +1,74 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useWeb3 } from '../../web3';
-import { convertInlineSVGToBlobURL } from '../../helpers';
-import { handleSubmitScore, handleGetHighscoreForTokenId, handleGetHighscores } from '../../firebase/actions';
+import { handleGetHighscores } from '../../firebase/actions';
 import { Leaderboard } from '../../components';
 import './styles.css';
 import { GotchiSelector } from '../../components/gotchiSelector';
+import { GameContainer } from '../../components/gameContainer';
 
 const Home = () => {
   const { getAavegotchisForUser, contract } = useWeb3();
   const [ gotchis, setGotchis ] = useState([]);
-  const [ game, setGame ] = useState();
-  const [ selectedIndex, setSelectedIndex ] = useState(0);
-
+  const [ selectedGotchi, setSelectedGotchi ] = useState();
   const [ highscores, setHighscores ] = useState([]);
+
+  const [ loaded, setLoaded ] = useState({
+    gotchis: false,
+    highscores: false,
+  })
 
   useEffect(() => {
     if (!contract) return;
     const getHighscores = async () => {
       const res = await handleGetHighscores();
-      console.log(res);
       setHighscores(res);
+      setLoaded((prevState) => {
+        return {
+          ...prevState,
+          highscores: true
+        }
+      })
     }
 
     const setUserGotchis = async () => {
       const gotchiRes = await getAavegotchisForUser();
       setGotchis(gotchiRes);
+      setLoaded((prevState) => {
+        return {
+          ...prevState,
+          gotchis: true
+        }
+      })
     }
 
     getHighscores();
-
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = './game/index.js';
-    script.defer = true;
-    script.onload = () => setUserGotchis();
-
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    }
+    setUserGotchis();
   }, [contract]);
 
-  const newGame = () => {
-    const Game = new window.game();
-    const scores = gotchis.map((gotchi, index) => {
-      return {
-        tokenId: gotchi.tokenId,
-        highscore: 0,
-      }
-    })
-    Game.init(scores[0].highscore, gotchis[selectedIndex], (score, tokenId) => handleHighscore(score, tokenId));
-    setGame(Game);
+  const handleGotchiSelect = useCallback(async (gotchi) => {
+    if (gotchi.tokenId === selectedGotchi?.tokenId) return;
+  
+    const tokenId = gotchi.tokenId.toString();
+    const score = highscores.find(item => item.tokenId === tokenId).score;
+    setSelectedGotchi({...gotchi, highscore: score || 0 });
+
+  }, [highscores, selectedGotchi])
+
+  if (!loaded.gotchis || !loaded.highscores) {
+    return (
+      <div className="App">
+        Loading
+      </div>
+    )
   }
-
-  const handleGotchiSelect = async (i) => {
-    if (game) {
-      setSelectedIndex(i);
-      const tokenId = gotchis[i].tokenId.toString();
-      game.endGame();
-      const score = await handleGetHighscoreForTokenId(tokenId);
-      game.restartGame(score || 0, gotchis[i]);
-    }
-  }
-
-  const handleHighscore = useCallback(async (score, gotchi) => {
-    console.log(score, gotchi);
-    const res = await handleSubmitScore(
-      score,
-      {
-        name: gotchi.name,
-        tokenId: gotchi.tokenId.toString(),
-      }
-    );
-    console.log(res);
-
-  }, []);
-
-  // Init game on load
-  useEffect(() => {
-    if (gotchis.length > 0) {
-      newGame();
-    }
-  }, [ gotchis ]);
-
 
   return (
     <div className="App">
 
       {gotchis.length > 0 && (
-        <GotchiSelector gotchis={gotchis} />
+        <GotchiSelector gotchis={gotchis} handleSelect={handleGotchiSelect} />
       )}
-      <canvas id="scoreCanvas" className="scoreBoard"></canvas>
-      <canvas id="canvas" className="gameCanvas"></canvas>
-      <div id="" className="gameDiv" hidden></div>
+      <GameContainer selectedGotchi={selectedGotchi} />
       <Leaderboard data={highscores} />
     </div>
   )

@@ -35,6 +35,17 @@
 .dropdown-container p {
   margin: 0;
 }
+.dropdown-container .chevron {
+  color: #fa34f3;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  font-size: 12px;
+}
+.dropdown-container .chevron-down {
+  transform: translateY(-50%);
+}
 
 .dropdown {
   position: absolute;
@@ -43,10 +54,14 @@
   right: -2px;
   box-sizing: border-box;
 }
+
 .dropdown option {
   border: 2px solid #fa34f3;
   background-color: black;
   margin-top: 4px;
   padding: 8px;
+}
+.dropdown option:hover {
+  background-color: #4C1F7D;
 }
 

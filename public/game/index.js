@@ -9,8 +9,6 @@ const ROWS = HEIGHT/SPRITE_SIZE;
 const MAX_BODY = (WIDTH/SPRITE_SIZE)*(HEIGHT/SPRITE_SIZE)-1;
 const ASSETSIZE = 4;
 
-console.log('hit');
-
 function game () {
     // Connect to web3
     //window.ethereum.enable();
@@ -90,11 +88,14 @@ function game () {
         this.canvas.addEventListener('click', this.awaitClickStart);
         this.interval = setInterval(this.renderUpdate, this.FPS);
     }
+    this.loadMusic = () => {
+        this.music = new Audio('./sfx/creep.m4a');
+    }
     this.awaitClickStart = () => {
         // listen for key events
         window.addEventListener('keydown', this.handleKeyEvents);
         //load the music
-        this.music = new Audio('./sfx/creep.m4a');
+        this.loadMusic();
         this.music.loop = true;
         this.music.volume = 0.25;
         this.music.play();
@@ -358,6 +359,7 @@ function game () {
         this.portals = [];
         this.createPortal();
         this.snake = new Snake(this.headRef, this.bodyRef, this.ctx, this);
+        if (!this.music) this.loadMusic();
         this.music.currentTime = 0;
         this.music.play();
         this.moveInterval = setInterval(this.moveUpdate, this.MPS);
@@ -378,7 +380,7 @@ function game () {
         window.removeEventListener('keydown', this.handleKeyEvents);
         this.canvas.addEventListener('click', this.restartGame);
         this.gameOver = true;
-        this.music.pause();
+        this.music?.pause();
     }
     
 }
