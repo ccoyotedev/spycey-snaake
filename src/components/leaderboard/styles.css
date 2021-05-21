@@ -17,3 +17,23 @@
   color: white;
   padding: 1.2rem;
 }
+
+.page-selector {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.page-selector .selector {
+  cursor: pointer;
+  border: 2px solid #fa34f3;
+  color: white;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+
+.page-selector .selector.selected {
+  background-color: #4C1F7D;
+}

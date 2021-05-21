@@ -1,5 +1,6 @@
 .App {
   max-width: 660px;
+  padding: 54px 0;
 }
 
 canvas {
