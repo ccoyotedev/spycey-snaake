@@ -59,7 +59,7 @@ const Home = () => {
     if (gotchi.tokenId === selectedGotchi?.tokenId) return;
   
     const tokenId = gotchi.tokenId.toString();
-    const score = highscores?.find(item => item.tokenId === tokenId).score;
+    const score = highscores?.find(item => item.tokenId === tokenId)?.score;
     setSelectedGotchi({...gotchi, highscore: score || 0 });
 
   }, [highscores, selectedGotchi])

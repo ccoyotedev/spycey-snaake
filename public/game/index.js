@@ -275,10 +275,15 @@ function game() {
         
         if(this.assetsloaded === ASSETSIZE) this.startGame();
     }
+    this.constructHeadUrl = (svg) => {
+        const DOMURL = window.URL || window.webkitURL || window;
+        const blob = new Blob([svg.replace('<style>', `<style>.gotchi-bg{display:none}`)], {type: "image/svg+xml;charset=utf-8"});
+        return DOMURL.createObjectURL(blob);
+    }
     this.loadAssets = () => {
         const head = new Image();
-        head.src = './sprites/head.png';
-        head.onload = this.imageOnLoad;
+        head.onload = (this.imageOnLoad);
+        head.src = this.constructHeadUrl(this.gotchi.svg);
         this.headRef = head;
 
         const body = new Image();
@@ -354,6 +359,7 @@ function game() {
     this.resetGame = (highscore, gotchi) => {
         this.showGameOver();
         this.gotchi = gotchi;
+        this.headRef.src = this.constructHeadUrl(gotchi.svg);
         this.highscore = highscore;
     }
     this.restartGame = () => {
@@ -533,6 +539,7 @@ class Snake {
 
 class PartCreator {
     createPart = function(sprite, position, direction){
+        console.log(sprite);
         //temporary part object
         const part = {};
         // object properties and functions
@@ -543,7 +550,7 @@ class PartCreator {
         part.moveSpeed = 1;
         //render function
         part.render = function(ctx){
-            ctx.drawImage(this.sprite, 0, 0, 32, 32, this.position.x*32, this.position.y*32, 32, 32);
+            ctx.drawImage(this.sprite, this.position.x*32, this.position.y*32, 32, 32);
         }
         //moves the snake
         part.move = function(){
