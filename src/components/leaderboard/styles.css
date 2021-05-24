@@ -2,7 +2,30 @@
   width: 100%;
   display: grid;
   gap: 8px;
-  margin-top: 54px;
+  margin-top: 32px;
+}
+
+.leaderboard h2 {
+  color: rgb(250, 51, 243, 0.4);
+  text-transform: uppercase;
+  display: block;
+  position: relative;
+  background-color: black;
+  width: fit-content;
+  padding-right: 8px;
+}
+
+.leaderboard .title-container {
+  position: relative;
+}
+.leaderboard .title-container::before {
+  background-color: rgb(250, 51, 243, 0.4);
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  right: 0;
+  top: 50%;
 }
 
 .leaderboard .row {
@@ -16,6 +39,9 @@
 .leaderboard .row .cell {
   color: white;
   padding: 1.2rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .page-selector {

@@ -27,6 +27,9 @@ export const Leaderboard = () => {
 
   return (
     <div className="leaderboard">
+      <div className="title-container">
+        <h2>Leaderboard</h2>
+      </div>
       <div className="row header-row glow">
         <div className="cell">Aavegotchi</div>
         <div className="cell">Score</div>

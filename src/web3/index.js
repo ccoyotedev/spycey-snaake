@@ -50,9 +50,12 @@ export const Web3Provider = ({ children }) => {
       const account = await getAddress();
       const gotchis = await contract?.allAavegotchisOfOwner(account);
 
-      if (gotchis.length === 0) throw new Error('No gotchis found - Please make sure your wallet is connected');
+      // Filter out portals
+      const gotchisOnly = gotchis.filter(gotchi => gotchi.status.toString() === "3");
 
-      const gotchisWithSVGs = await _getAllAavegotchiSVGs(gotchis || []);
+      if (gotchisOnly.length === 0) throw new Error('No gotchis found - Please make sure your wallet is connected');
+
+      const gotchisWithSVGs = await _getAllAavegotchiSVGs(gotchisOnly || []);
       setUsersGotchis(gotchisWithSVGs);
       return {
         status: 200,

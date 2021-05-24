@@ -37,10 +37,11 @@ function game() {
     //#endregion
 
     //game functions
-    this.init = (highscore, gotchi, setHighscoreCallback) => {
+    this.init = (highscore, gotchi, setHighscoreCallback, handleIsPlayingCallback) => {
         this.highscore = highscore;
         this.setHighscore = setHighscoreCallback;
         this.gotchi = gotchi;
+        this.handleIsPlaying = handleIsPlayingCallback;
 
         //load the image files for reference
         this.loadAssets();
@@ -112,7 +113,6 @@ function game() {
         this.music = new Audio('./sfx/creep.m4a');
     }
     this.awaitClickStart = () => {
-        console.log('click start');
         if(!isMobile){
             window.addEventListener('keydown', this.handleKeyEvents);
         } else {
@@ -121,6 +121,7 @@ function game() {
                 btns[i].addEventListener('click', this.handleButtonClick);
             }
         }
+        this.handleIsPlaying(true);
         this.loadMusic();
         this.music.loop = true;
         this.music.volume = 0.25;
@@ -175,6 +176,7 @@ function game() {
         }
     }
     this.showGameOver = () => {
+        this.handleIsPlaying(false);
         this.ctx.fillStyle = 'black';
 
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -362,6 +364,7 @@ function game() {
         this.highscore = highscore;
     }
     this.restartGame = () => {
+        this.handleIsPlaying(true);
         this.score = 0;
         this.special = null;
         this.portals = [];
@@ -538,7 +541,6 @@ class Snake {
 
 class PartCreator {
     createPart = function(sprite, position, direction){
-        console.log(sprite);
         //temporary part object
         const part = {};
         // object properties and functions

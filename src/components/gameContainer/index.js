@@ -7,6 +7,7 @@ export const GameContainer = ({selectedGotchi}) => {
 
   const [loading, setLoading] = useState(true);
   const [game, setGame] = useState();
+  const [isPlaying, setIsPlaying]  = useState(false);
 
   useEffect(() => {
     setLoading(true)
@@ -22,6 +23,25 @@ export const GameContainer = ({selectedGotchi}) => {
     }
   }, []);
 
+  // Prevent keys from scrolling
+  useEffect(() => {
+    const preventArrowScroll = (e) => {
+      if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+      }
+    }
+
+    if (isPlaying) {
+      window.addEventListener("keydown", preventArrowScroll, false);
+    } else {
+      window.removeEventListener("keydown", preventArrowScroll, false);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", preventArrowScroll, false);
+    }
+  }, [isPlaying])
+
   useEffect(() => {
     if (loading || !selectedGotchi) return;
 
@@ -31,7 +51,12 @@ export const GameContainer = ({selectedGotchi}) => {
   const newGame = async (gotchi) => {
     if (!game) {
       const Game = new window.game();
-      Game.init(gotchi.highscore, gotchi, (score, gotchi) =>  handleHighscore(score, gotchi));
+      Game.init(
+        gotchi.highscore,
+        gotchi,
+        (score, gotchi) =>  handleHighscore(score, gotchi),
+        (boolean) => setIsPlaying(boolean),
+      );
       setGame(Game);
     } else {
       game.resetGame(gotchi.highscore || 0, gotchi);

@@ -80,17 +80,17 @@
 @media only screen and (min-width: 640px) {
   canvas {
     border: 10px solid purple;
+    box-sizing: border-box;
   }
 
   .gameCanvas {
     background: lightblue;
-    width: 100%;
     max-height: 640px;
+    width: 100%;
     /* box-shadow: 5px 10px rgba(255, 255, 255, 0.1); */
   }
-  .scoreCanvas {
+  #scoreCanvas {
     width: 100%;
-    max-height: 40px;
   }
 
   #mobile-controls {
