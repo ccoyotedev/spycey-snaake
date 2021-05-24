@@ -15,11 +15,14 @@ const Home = () => {
 
   const [ error, setError ] = useState();
 
-  const [ loaded, setLoaded ] = useState(true);
+  const [ loaded, setLoaded ] = useState({
+    gotchis: false,
+    highscores: false,
+  });
 
+  // Load in gotchis
   useEffect(() => {
-    if (!contract || highscores === undefined) return;
-
+    if (!contract) return;
     const setUserGotchis = async () => {
       const gotchiRes = await getAavegotchisForUser();
       if (gotchiRes.status === 200) {
@@ -28,22 +31,40 @@ const Home = () => {
         console.log(gotchiRes);
         setError(gotchiRes);
       }
-      setLoaded(true);
+  
+      setLoaded((prevState) => {
+        return {
+          ...prevState,
+          gotchis: true,
+        }
+      });
     }
 
     setUserGotchis();
-  }, [contract, highscores]);
+  }, [contract]);
+
+  // Highscores Loaded
+  useEffect(() => {
+    if (highscores !== undefined) {
+      setLoaded((prevState) => {
+        return {
+          ...prevState,
+          highscores: true,
+        }
+      });
+    }
+  }, [highscores])
 
   const handleGotchiSelect = useCallback(async (gotchi) => {
     if (gotchi.tokenId === selectedGotchi?.tokenId) return;
   
     const tokenId = gotchi.tokenId.toString();
-    const score = highscores.find(item => item.tokenId === tokenId).score;
+    const score = highscores?.find(item => item.tokenId === tokenId).score;
     setSelectedGotchi({...gotchi, highscore: score || 0 });
 
   }, [highscores, selectedGotchi])
 
-  if (!loaded) {
+  if (!loaded.gotchis || !loaded.highscores) {
     return (
       <div className="App">
         <h3 className="loading">
@@ -59,7 +80,7 @@ const Home = () => {
         <h3 className="error-message">
           Error code - {error.status}
           <br />
-          {error.error.message}
+          {error.error?.message}
         </h3>
       </div>
     )

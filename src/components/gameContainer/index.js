@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useFirebase } from '../../firebase';
 import './styles.css';
 
@@ -31,11 +31,10 @@ export const GameContainer = ({selectedGotchi}) => {
   const newGame = async (gotchi) => {
     if (!game) {
       const Game = new window.game();
-      Game.init(gotchi.highscore, gotchi, (score, tokenId) => handleHighscore(score, tokenId));
+      Game.init(gotchi.highscore, gotchi, (score, gotchi) =>  handleHighscore(score, gotchi));
       setGame(Game);
     } else {
-      game.endGame();
-      game.restartGame(gotchi.highscore || 0, gotchi);
+      game.resetGame(gotchi.highscore || 0, gotchi);
     }
   }
 
@@ -60,7 +59,12 @@ export const GameContainer = ({selectedGotchi}) => {
     <div>
       <canvas id="scoreCanvas" className="scoreBoard"></canvas>
       <canvas id="canvas" className="gameCanvas"></canvas>
-      <div id="" className="gameDiv" hidden></div>
+      <div id="mobile-controls" hidden>
+          <div type="button" className="btn up-arrow far fa-arrow-alt-circle-up" id="up"></div>
+          <div type="button" className="btn left-arrow far fa-arrow-alt-circle-left" id="left"></div>
+          <div type="button" className="btn right-arrow far fa-arrow-alt-circle-right" id="right"></div>
+          <div type="button" className="btn down-arrow far fa-arrow-alt-circle-down" id="down"></div>
+      </div>
     </div>
   )
 }
