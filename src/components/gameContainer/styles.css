@@ -1,17 +1,99 @@
-canvas {
-  border: 10px solid purple;
+.game-wrapper {
+  position: relative;
 }
+
 .gameCanvas {
   background: lightblue;
+  width: 100%;
+  max-height: 320px;
   /* box-shadow: 5px 10px rgba(255, 255, 255, 0.1); */
+}
+.scoreCanvas {
+  width: 100%;
+  max-height: 40px;
 }
 .scoreBoard {
   background: lightpink;
+  width: 100%;
   /* box-shadow: 5px 10px rgba(255, 255, 255, 0.1); */
 }
-.gameDiv {
+/* .gameDiv {
   width: 650px;
   height: 100px;
   background: grey;
   border: 5px solid purple;
+} */
+.up-arrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 3em;
+  padding-bottom: 0.5em;
+}
+.left-arrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 48px;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 3em;
+  padding-right: 0.5em;
+}
+.left-arrow::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+.right-arrow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 3em;
+  padding-left: 0.5em;
+}
+.right-arrow::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+.down-arrow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding-top: 0.5em;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 3em;
+}
+
+
+@media only screen and (min-width: 640px) {
+  canvas {
+    border: 10px solid purple;
+  }
+
+  .gameCanvas {
+    background: lightblue;
+    width: 100%;
+    max-height: 640px;
+    /* box-shadow: 5px 10px rgba(255, 255, 255, 0.1); */
+  }
+  .scoreCanvas {
+    width: 100%;
+    max-height: 40px;
+  }
+
+  #mobile-controls {
+    display: none;
+  }
 }

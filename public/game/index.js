@@ -1,4 +1,4 @@
-const WIDTH = window.innerWidth < 600 || window.innerHeight < 800 ? 320 : 640;
+const WIDTH = (window.innerWidth < 600) ? 320 : 640;
 const HEIGHT = WIDTH;
 const SPRITE_SIZE = 32;
 const COLS = WIDTH/SPRITE_SIZE;
@@ -34,7 +34,6 @@ function game() {
         37, 38, 39, 40
     ]
     
-    if(isMobile) document.getElementById('mobile-controls').style.display = 'block';
     //#endregion
 
     //game functions

@@ -1,5 +1,6 @@
 .App {
-  max-width: 660px;
+  width: 100%;
+  max-width: 320px;
   padding: 54px 0;
 }
 
@@ -9,4 +10,10 @@
 
 .loading {
   color: white;
+}
+
+@media only screen and (min-width: 640px) {
+  .App {
+    max-width: 640px;
+  }
 }
